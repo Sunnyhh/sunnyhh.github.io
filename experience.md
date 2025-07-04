@@ -4,7 +4,7 @@ title: Experience
 ---
 
 ### May -- July 2025
-**Phlo Systems Limited** \\
+**Phlo Systems Limited** • London, UK \\
 *Analyst and Developer*
 
 - Built a multi-agent AI system for commodity trading, adapting existing stock market research to the commodities domain.
@@ -14,7 +14,7 @@ title: Experience
 ---
 
 ### July -- September 2024
-**Ernst & Young (EY)** \\
+**Ernst & Young (EY)** • Shanghai, China \\
 *Risk Management Consultant*
 
 - Led on-site supervision for a key banking client, managing a team of interns, and ensuring project milestones were met.
@@ -24,7 +24,7 @@ title: Experience
 ---
 
 ### July 2024 -- Present
-**Student Career Center** \\
+**Student Career Center** • Online \\
 *Tutor and Counselor*
 
 - Deliver one-on-one IGCSE and A-Level Mathematics tutoring, tailoring instructions to student needs and academic goals.
