@@ -1,5 +1,6 @@
 ---
 layout: page
+title: ""
 permalink: /
 ---
 
@@ -9,4 +10,4 @@ I'm a second year undergraduate student at UCL, majoring in Statistics. Welcome 
 
 - [CV](/cv/)
 - [About Me](/aboutme/)
-- [Projects](/projects/)
+- [Research](/research/)
