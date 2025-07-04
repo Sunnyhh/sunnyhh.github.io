@@ -17,4 +17,4 @@ I'm a second year undergraduate student at UCL, majoring in Statistical Science.
 
 ### Photography Page
 
-- [JetPhotos]("https://jetphotos.com/photographer/203526")
+- [JetPhotos](https://jetphotos.com/photographer/203526)
