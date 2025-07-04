@@ -10,7 +10,7 @@
 ############################
 
 # Name of website
-title: Personal Site
+title: Sunny
 
 # Your name to show in the footer
 author: Ge (Sunny) Li
@@ -46,8 +46,8 @@ title-img: "/assets/img/avatar-icon.png"
 # Uncomment the links you want to show and add your information to each one.
 social-network-links:
   email: "sunnyhh051008@gmail.com"
-  GitHub: "https://github.com/Sunnyhh"
-  LinkedIn: "https://www.linkedin.com/in/ge-li-778063218"
+  GitHub: https://github.com/Sunnyhh
+  LinkedIn: https://www.linkedin.com/in/ge-li-778063218
 
 # If you want your website to generate an RSS feed, provide a description
 # The URL for the feed will be https://<your_website>/feed.xml
@@ -57,14 +57,13 @@ rss-description: This website is a virtual proof that I'm awesome
 # --- General options --- #
 ###########################
 
-# Select which social network share links to show in posts
+# Share links in footer
 share-links-active:
   twitter: true
   facebook: true
   linkedin: true
   reddit: false
 
-# How to display the link to your website in the footer
 # url-pretty: "MyWebsite.com"
 
 # Add the website title to the title of every page
