@@ -8,8 +8,8 @@ permalink: /
 
 I'm a second year undergraduate student at UCL, majoring in Statistical Science. I'm also an aviation enthusiast and amateur photographer. Welcome to my site.
 
-- [About Me](/aboutme/)
 - [Research](/research/)
+- [Experience](/experience/)
 
 ### My Flights
 
