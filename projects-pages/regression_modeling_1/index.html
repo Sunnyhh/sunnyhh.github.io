@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <title>
+  Tips for Taxi Drivers · Sunny
+</title>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="description" content="
+  Explanatory Data Analysis (EDA)
+  
+    
+    Link to heading
+  
+
+A research has been conducted regarding the money taxi drivers receive in tip across different journeys. These journeys vary in the distance traveled, time duration, number of passengers, the time of day took place, taxi companies, and payment methods. Our goal is to investigate how these differences contribute to the amount of tips taxi drivers receive. The dataset contains 500 observations of 7 variables in total with no data missing.">
+<meta name="keywords" content="">
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Tips for Taxi Drivers">
+  <meta name="twitter:description" content="Explanatory Data Analysis (EDA) Link to heading A research has been conducted regarding the money taxi drivers receive in tip across different journeys. These journeys vary in the distance traveled, time duration, number of passengers, the time of day took place, taxi companies, and payment methods. Our goal is to investigate how these differences contribute to the amount of tips taxi drivers receive. The dataset contains 500 observations of 7 variables in total with no data missing.">
+
+<meta property="og:url" content="http://localhost:1313/projects-pages/regression_modeling_1/">
+  <meta property="og:site_name" content="Sunny">
+  <meta property="og:title" content="Tips for Taxi Drivers">
+  <meta property="og:description" content="Explanatory Data Analysis (EDA) Link to heading A research has been conducted regarding the money taxi drivers receive in tip across different journeys. These journeys vary in the distance traveled, time duration, number of passengers, the time of day took place, taxi companies, and payment methods. Our goal is to investigate how these differences contribute to the amount of tips taxi drivers receive. The dataset contains 500 observations of 7 variables in total with no data missing.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="projects-pages">
+
+
+
+
+<link rel="canonical" href="http://localhost:1313/projects-pages/regression_modeling_1/">
+
+
+<link rel="preload" href="/fonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="/css/coder.css" media="screen">
+
+
+
+
+
+
+  
+    
+    
+    <link rel="stylesheet" href="/css/coder-dark.css" media="screen">
+  
+
+
+
+ 
+  
+    
+    <link rel="stylesheet" href="/css/custom.css" media="screen">
+  
+
+
+
+
+
+<link rel="icon" type="image/svg+xml" href="/images/favicon.svg" sizes="any">
+<link rel="icon" type="image/png" href="/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+
+
+
+
+
+</head>
+
+
+
+
+
+
+<body class="preload-transitions colorscheme-auto">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
+  <section class="container">
+    
+    <a class="navigation-title" href="http://localhost:1313/">
+      Sunny
+    </a>
+    
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link " href="/">Home</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link " href="/projects/">Projects</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link " href="/experience/">Experience</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link " href="https://sunnyhh.github.io/photography">Photography</a>
+            </li>
+          
+        
+        
+      </ul>
+    
+  </section>
+</nav>
+
+
+    <div class="content">
+      
+  <section class="container page">
+  <article>
+    <header>
+      <h1 class="title">
+        <a class="title-link" href="http://localhost:1313/projects-pages/regression_modeling_1/">
+          Tips for Taxi Drivers
+        </a>
+      </h1>
+    </header>
+
+    <h2 id="explanatory-data-analysis-eda">
+  Explanatory Data Analysis (EDA)
+  <a class="heading-link" href="#explanatory-data-analysis-eda">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>A research has been conducted regarding the money taxi drivers receive in tip across different journeys. These journeys vary in the distance traveled, time duration, number of passengers, the time of day took place, taxi companies, and payment methods. Our goal is to investigate how these differences contribute to the amount of tips taxi drivers receive. The dataset contains 500 observations of 7 variables in total with no data missing.</p>
+<p>The mean amount of tip taxi drivers receive in journeys is approximately 2.295 pounds, and the standard deviation is 1.124 pounds. We first analyze the relationships between our response variable <code>tip</code> and the three categorical covariates. The three boxplots shown below present the tip drivers receive when they work in different times of the day, for different companies, and pay through different payment methods. We can identify certain general patterns by observing these boxplots. In the first boxplot, it can be seen that drivers tend to receive more tips at night yet fewer tips in the morning. In the second boxplot, it can be identified that self-employed taxi drivers tend to receive slightly more tips than those drivers employed by the <code>Green_Taxis</code> and <code>Red_Taxis</code> companies. While in the last boxplot, we cannot yet identify the specific relationship between the tip drivers receive and the payment methods the passengers use as the three boxes are very close to each other. Therefore, further investigations will be required.</p>
+<!-- raw HTML omitted -->
+<p>Now, we investigate the rest numeric covariates using scatterplots. The three scatterplots below demonstrate the relationships between the tip drivers receive and the mileage traveled during the taxi journey, the duration of the journey, and the number of passengers onboard. Observing the first and second scatterplots, the tips drivers receive increase as the taxi journey mileage and duration increase. Therefore, there appears to be a positive relationship between the tip amount and both the journey mileage and the trip duration. However, the third scatterplot is less informative and straightforward, indicating that further investigations may be required. But generally, there&rsquo;s also a slight positive relationship between the tip amount and the number of passengers.</p>
+<!-- raw HTML omitted -->
+<p>In conclusion, our initial findings suggest that all the 6 covariates &ndash; including mileage, duration, the time of the day of the journey, payment methods, the company the drivers belong to, and the number of passengers &ndash; may all affect the amount of tip the drivers receive. All variables should therefore be considered when building the statistical model for the money drivers received in tip.</p>
+<p><strong>Word count for Q1:</strong> (<strong>410</strong> / <strong>500</strong>).</p>
+<h2 id="normality-check">
+  Normality Check
+  <a class="heading-link" href="#normality-check">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<ul>
+<li>As can be seen from the normal QQ-plot below, the data points on the two sides show significant deviations from the 45-degree line; we therefore conclude that the variable <code>tip</code> is not normally distributed.</li>
+</ul>
+<!-- raw HTML omitted -->
+<ul>
+<li>By conducting a Shapiro-Wilk normality test, we get a p-value of 2.7142757^{-10} $&lt; 0.05$, which implies that the distribution of the variable <code>tip</code> is significantly different from the normal distribution, we reject the normality.</li>
+<li>The lack of normality in the response variable <code>tip</code> does not raise any concerns about fitting a normal linear model, as it is not required.</li>
+</ul>
+<p><strong>Word count for Q2:</strong> (<strong>92</strong> / <strong>150</strong>).</p>
+<h2 id="linear-model">
+  Linear Model
+  <a class="heading-link" href="#linear-model">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>The summary of the linear regression model for <code>tip</code> is shown below.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: right">Estimate</th>
+          <th style="text-align: right">Std. Error</th>
+          <th style="text-align: right">t value</th>
+          <th style="text-align: right">Pr(&gt;|t|)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">(Intercept)</td>
+          <td style="text-align: right">-1.8002929</td>
+          <td style="text-align: right">0.2207227</td>
+          <td style="text-align: right">-8.1563574</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">mileage</td>
+          <td style="text-align: right">0.0732290</td>
+          <td style="text-align: right">0.0103362</td>
+          <td style="text-align: right">7.0847258</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">duration</td>
+          <td style="text-align: right">0.0771077</td>
+          <td style="text-align: right">0.0109025</td>
+          <td style="text-align: right">7.0724587</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">companyRed_Taxis</td>
+          <td style="text-align: right">0.1597982</td>
+          <td style="text-align: right">0.0763931</td>
+          <td style="text-align: right">2.0917897</td>
+          <td style="text-align: right">0.0369726</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">companySelf_Employed</td>
+          <td style="text-align: right">0.3743610</td>
+          <td style="text-align: right">0.0462175</td>
+          <td style="text-align: right">8.0999845</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">passengers</td>
+          <td style="text-align: right">0.2732211</td>
+          <td style="text-align: right">0.0170396</td>
+          <td style="text-align: right">16.0344435</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timeevening</td>
+          <td style="text-align: right">0.1715159</td>
+          <td style="text-align: right">0.0668029</td>
+          <td style="text-align: right">2.5674932</td>
+          <td style="text-align: right">0.0105398</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timemorning</td>
+          <td style="text-align: right">-0.0214697</td>
+          <td style="text-align: right">0.0618470</td>
+          <td style="text-align: right">-0.3471425</td>
+          <td style="text-align: right">0.7286336</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timenight</td>
+          <td style="text-align: right">1.4327309</td>
+          <td style="text-align: right">0.0598428</td>
+          <td style="text-align: right">23.9415737</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcard</td>
+          <td style="text-align: right">-0.2064597</td>
+          <td style="text-align: right">0.0622158</td>
+          <td style="text-align: right">-3.3184446</td>
+          <td style="text-align: right">0.0009727</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcash</td>
+          <td style="text-align: right">0.0842382</td>
+          <td style="text-align: right">0.0795215</td>
+          <td style="text-align: right">1.0593124</td>
+          <td style="text-align: right">0.2899805</td>
+      </tr>
+  </tbody>
+</table>
+<p>We are not concerned about the negative intercept as it represents the expected tip a driver receives for the reference groups when all numerical variables are 0. In reality, such a taxi journey does not exist. Therefore, it is meaningless to interpret the intercept independently; we need to combine it with other aspects of the model to analyze them as a whole. Alternatively, it can be considered the &ldquo;cost&rdquo; of a taxi driving without passengers, which makes sense to be negative.</p>
+<p><strong>Word count for Q3:</strong> (<strong>93</strong> / <strong>100</strong>).</p>
+<h2 id="model-output-interpretations">
+  Model Output Interpretations
+  <a class="heading-link" href="#model-output-interpretations">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<ul>
+<li><code>companySelf_employed</code>: The expected difference in the <code>tip</code> drivers receive between <code>Green_Taxis</code> drivers (reference category) and <code>Self_Employed</code> drivers is 0.3744 pounds, holding all other covariates fixed.</li>
+<li><code>passengers</code>: The expected change in the <code>tip</code> drivers receive for a 1-person increase in <code>passengers</code> is 0.2732 pounds, holding all other covariates fixed.</li>
+</ul>
+<p><strong>Word count for Q4:</strong> (<strong>48</strong> / <strong>150</strong>).</p>
+<h2 id="model-output-analysis">
+  Model Output Analysis
+  <a class="heading-link" href="#model-output-analysis">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<ul>
+<li>The degree of freedom of the linear regression model can be calculated by $\text{df} = n - p - 1,$ where $n$ is the sample size, and $p$ represents the number of predictors. There are 5 levels of covariates by treating the covariate <code>passengers</code> as categorical, among which 1 level will be taken as the reference category, leaving only 4 levels as predictors. Compared to the previous <code>model1</code>, there are $\Delta p = 4 - 1 = 3$ more predictors, and therefore leading a decrease of $3$ degrees of freedom. Since the previous model has a degree of freedom of $489$, the degree of freedom of <code>model2</code> would be $486$.</li>
+<li>The interpretation of the <code>passengers</code> covariate would now become the same as those of other categorical covariates. The interpretation of the estimated coefficients of <code>passengers</code> in the model would become the expected change in <code>tip</code> between the number of passengers onboard is 1 (reference group) and the number of passengers is more, holding all other covariates fixed.</li>
+<li>No, the new model would not be nested in <code>model1</code> as it contains more covariates, whereas a nested model should contain a subset of the covariates of its full model.</li>
+<li>I prefer handling the <code>passengers</code> covariate as a categorical data as it demonstrates a clearer relationship between the tip and the number of passengers.</li>
+<li>No. The covariate <code>passengers</code> only takes 5 values and therefore is rather &ldquo;discrete&rdquo;, yet comparatively the other numeric covariates are more continuous and therefore cannot be treated as categorical.</li>
+</ul>
+<p><strong>Word count for Q5:</strong> (<strong>237</strong> / <strong>300</strong>).</p>
+<h2 id="new-linear-model">
+  New Linear Model
+  <a class="heading-link" href="#new-linear-model">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<ul>
+<li>
+<p>Since the driver&rsquo;s claim involves both the distance traveled and the passage of time, we need to examine the level of dependence of the response variable <code>tip</code> to the change of the covariate <code>mileage</code> with different levels of <code>time</code>. Therefore, in the second model <code>model2</code>, we incorporate an interaction between the two covariates <code>mileage</code> and <code>time</code> to address the issue.</p>
+</li>
+<li>
+<p>The model summary for <code>model2</code> is as shown below.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: right">Estimate</th>
+          <th style="text-align: right">Std. Error</th>
+          <th style="text-align: right">t value</th>
+          <th style="text-align: right">Pr(&gt;|t|)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">(Intercept)</td>
+          <td style="text-align: right">-1.4558565</td>
+          <td style="text-align: right">0.2246455</td>
+          <td style="text-align: right">-6.4806837</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">mileage</td>
+          <td style="text-align: right">0.0506237</td>
+          <td style="text-align: right">0.0122057</td>
+          <td style="text-align: right">4.1475495</td>
+          <td style="text-align: right">0.0000397</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timeevening</td>
+          <td style="text-align: right">0.3248454</td>
+          <td style="text-align: right">0.1602426</td>
+          <td style="text-align: right">2.0272099</td>
+          <td style="text-align: right">0.0431862</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timemorning</td>
+          <td style="text-align: right">-0.0126079</td>
+          <td style="text-align: right">0.1468299</td>
+          <td style="text-align: right">-0.0858675</td>
+          <td style="text-align: right">0.9316071</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timenight</td>
+          <td style="text-align: right">0.4211566</td>
+          <td style="text-align: right">0.1433290</td>
+          <td style="text-align: right">2.9383913</td>
+          <td style="text-align: right">0.0034561</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">duration</td>
+          <td style="text-align: right">0.0742611</td>
+          <td style="text-align: right">0.0098453</td>
+          <td style="text-align: right">7.5428272</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">companyRed_Taxis</td>
+          <td style="text-align: right">0.1582887</td>
+          <td style="text-align: right">0.0688851</td>
+          <td style="text-align: right">2.2978650</td>
+          <td style="text-align: right">0.0219934</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">companySelf_Employed</td>
+          <td style="text-align: right">0.4066611</td>
+          <td style="text-align: right">0.0418211</td>
+          <td style="text-align: right">9.7238364</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">passengers</td>
+          <td style="text-align: right">0.2643579</td>
+          <td style="text-align: right">0.0153757</td>
+          <td style="text-align: right">17.1932617</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcard</td>
+          <td style="text-align: right">-0.2130652</td>
+          <td style="text-align: right">0.0561786</td>
+          <td style="text-align: right">-3.7926428</td>
+          <td style="text-align: right">0.0001678</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcash</td>
+          <td style="text-align: right">0.0382120</td>
+          <td style="text-align: right">0.0718910</td>
+          <td style="text-align: right">0.5315268</td>
+          <td style="text-align: right">0.5952967</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">mileage:timeevening</td>
+          <td style="text-align: right">-0.0141387</td>
+          <td style="text-align: right">0.0132389</td>
+          <td style="text-align: right">-1.0679730</td>
+          <td style="text-align: right">0.2860629</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">mileage:timemorning</td>
+          <td style="text-align: right">-0.0011588</td>
+          <td style="text-align: right">0.0120783</td>
+          <td style="text-align: right">-0.0959440</td>
+          <td style="text-align: right">0.9236046</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">mileage:timenight</td>
+          <td style="text-align: right">0.0937530</td>
+          <td style="text-align: right">0.0120426</td>
+          <td style="text-align: right">7.7851143</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+  </tbody>
+</table>
+</li>
+<li>
+<p>As can be seen from the model summary above, the coefficient of the reference category <code>mileage:timeafternoon</code> is $0.051$; the coefficient of <code>mileage:timemorning</code> is $0.051-0.001=0.05$; the coefficient of <code>mileage:timeevening</code> is $0.051-0.014=0.037$; whereas the coefficient of <code>mileage:timenight</code> is $0.051+0.094=0.145$. These positive coefficients represent how fast the tips increase with distance travelled in different time of the day. The driver&rsquo;s claim is partly true since that the tips increase faster in the afternoon than in the morning, as well as faster at night than in the evening. However, it is also noticeable that there exists a gap between the afternoon and the evening when the increasing rate of tips actually slows down.</p>
+</li>
+<li>
+<p>We implement the <code>anova()</code> function to carry out an F-test between the two models. The model summary is as shown below.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: right">Res.Df</th>
+          <th style="text-align: right">RSS</th>
+          <th style="text-align: right">Df</th>
+          <th style="text-align: right">Sum of Sq</th>
+          <th style="text-align: right">F</th>
+          <th style="text-align: right">Pr(&gt;F)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: right">489</td>
+          <td style="text-align: right">106.3309</td>
+          <td style="text-align: right">NA</td>
+          <td style="text-align: right">NA</td>
+          <td style="text-align: right">NA</td>
+          <td style="text-align: right">NA</td>
+      </tr>
+      <tr>
+          <td style="text-align: right">486</td>
+          <td style="text-align: right">85.7492</td>
+          <td style="text-align: right">3</td>
+          <td style="text-align: right">20.5817</td>
+          <td style="text-align: right">38.88357</td>
+          <td style="text-align: right">0</td>
+      </tr>
+  </tbody>
+</table>
+</li>
+<li>
+<p>We prefer the second model <code>model2</code> as the small p-value in the F-test in ANOVA suggests a significant difference between the two models, and the second model is a full model with a smaller Residual Sum of Squares (RSS).</p>
+</li>
+</ul>
+<p><strong>Word count for Q6:</strong> (<strong>238</strong> / <strong>300</strong>).</p>
+<h2 id="error-check">
+  Error Check
+  <a class="heading-link" href="#error-check">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p><strong>Homoscedasticity of the errors</strong></p>
+<!-- raw HTML omitted -->
+<p>To check the homoscedasticity of the errors, we plot the standardized residuals against the fitted values. As can be seen from the plot above, the standardized residuals appear to be smaller for both smaller and larger fitted values, whereas appear to be larger for fitted values in the middle. Therefore, the plot provides certain evidence against homoscedasticity.</p>
+<p></p>
+<p><strong>Normality of the errors</strong></p>
+<!-- raw HTML omitted -->
+<p>As can be seen from the QQ-plot of the standardized residuals above, all the data points roughly fall on the 45-degree reference line without significant deviations. Therefore, the normality assumption of errors is correct.</p>
+<p><strong>Word count for Q7:</strong> (<strong>99</strong> / <strong>200</strong>).</p>
+<h2 id="potential-model-improvement">
+  Potential Model Improvement
+  <a class="heading-link" href="#potential-model-improvement">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Despite two possible improvements mentioned earlier &ndash; treating <code>passengers</code> covariate as categorical, and incorporating interactions between <code>mileage</code> and <code>time</code> of the day &ndash; there are some other approaches to potentially improve the model for <code>tip</code> further.</p>
+<p>To begin with, since we observed a gap in the increment of the coefficients of the interactions of <code>mileage</code> and <code>time</code>, we can further break down <code>time</code> into more specific time period of the day. At present, the daytime is divided into morning, afternoon, and evening, while the entire night is treated as a single block. To address this, we could split the nighttime into two segments &ndash; early and late night &ndash; or even three by introducing a dusk period to complement the evening, which would balance the dispatch times more evenly.</p>
+<p>Secondly, similar to the interaction implemented in <code>model2</code>, more interactions between covariates can be incorporated. For example, interactions between <code>payment</code> and <code>time</code> may have certain effects as it might be harder to hire a taxi at certain times of day &ndash; such as during the evening rush or or late at night &ndash; more people may opt to book and pay through an app.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: right">Estimate</th>
+          <th style="text-align: right">Std. Error</th>
+          <th style="text-align: right">t value</th>
+          <th style="text-align: right">Pr(&gt;|t|)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">(Intercept)</td>
+          <td style="text-align: right">-1.8842948</td>
+          <td style="text-align: right">0.2353316</td>
+          <td style="text-align: right">-8.0069785</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcard</td>
+          <td style="text-align: right">-0.1366748</td>
+          <td style="text-align: right">0.1149029</td>
+          <td style="text-align: right">-1.1894807</td>
+          <td style="text-align: right">0.2348349</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcash</td>
+          <td style="text-align: right">0.2289849</td>
+          <td style="text-align: right">0.1941376</td>
+          <td style="text-align: right">1.1794975</td>
+          <td style="text-align: right">0.2387808</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timeevening</td>
+          <td style="text-align: right">0.2479276</td>
+          <td style="text-align: right">0.1644137</td>
+          <td style="text-align: right">1.5079504</td>
+          <td style="text-align: right">0.1322210</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timemorning</td>
+          <td style="text-align: right">0.0784073</td>
+          <td style="text-align: right">0.1552336</td>
+          <td style="text-align: right">0.5050924</td>
+          <td style="text-align: right">0.6137243</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">timenight</td>
+          <td style="text-align: right">1.5219088</td>
+          <td style="text-align: right">0.1519608</td>
+          <td style="text-align: right">10.0151390</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">mileage</td>
+          <td style="text-align: right">0.0717190</td>
+          <td style="text-align: right">0.0103888</td>
+          <td style="text-align: right">6.9034941</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">companyRed_Taxis</td>
+          <td style="text-align: right">0.1679433</td>
+          <td style="text-align: right">0.0767258</td>
+          <td style="text-align: right">2.1888775</td>
+          <td style="text-align: right">0.0290838</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">companySelf_Employed</td>
+          <td style="text-align: right">0.3752827</td>
+          <td style="text-align: right">0.0468061</td>
+          <td style="text-align: right">8.0178156</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">passengers</td>
+          <td style="text-align: right">0.2737840</td>
+          <td style="text-align: right">0.0170976</td>
+          <td style="text-align: right">16.0130275</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">duration</td>
+          <td style="text-align: right">0.0784730</td>
+          <td style="text-align: right">0.0109775</td>
+          <td style="text-align: right">7.1485247</td>
+          <td style="text-align: right">0.0000000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcard:timeevening</td>
+          <td style="text-align: right">-0.0425996</td>
+          <td style="text-align: right">0.1832302</td>
+          <td style="text-align: right">-0.2324924</td>
+          <td style="text-align: right">0.8162541</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcash:timeevening</td>
+          <td style="text-align: right">-0.3072854</td>
+          <td style="text-align: right">0.2553695</td>
+          <td style="text-align: right">-1.2032972</td>
+          <td style="text-align: right">0.2294508</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcard:timemorning</td>
+          <td style="text-align: right">-0.1100570</td>
+          <td style="text-align: right">0.1717539</td>
+          <td style="text-align: right">-0.6407830</td>
+          <td style="text-align: right">0.5219676</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcash:timemorning</td>
+          <td style="text-align: right">-0.2092240</td>
+          <td style="text-align: right">0.2546747</td>
+          <td style="text-align: right">-0.8215342</td>
+          <td style="text-align: right">0.4117474</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcard:timenight</td>
+          <td style="text-align: right">-0.1247516</td>
+          <td style="text-align: right">0.1669767</td>
+          <td style="text-align: right">-0.7471196</td>
+          <td style="text-align: right">0.4553549</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">paymentcash:timenight</td>
+          <td style="text-align: right">-0.0815021</td>
+          <td style="text-align: right">0.2413785</td>
+          <td style="text-align: right">-0.3376525</td>
+          <td style="text-align: right">0.7357718</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Word count for Q8:</strong> (<strong>187</strong> / <strong>250</strong>).</p>
+
+  </article>
+</section>
+
+  
+
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    ©
+    
+    2025
+    
+    ·
+    
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
+    
+  </section>
+</footer>
+
+  </main>
+
+  
+
+  
+  
+  <script src="/js/coder.js"></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+</html>

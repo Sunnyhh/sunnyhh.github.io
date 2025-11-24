@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects-Pages on Sunny</title>
+    <link>http://localhost:1313/projects-pages/</link>
+    <description>Recent content in Projects-Pages on Sunny</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <atom:link href="http://localhost:1313/projects-pages/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tips for Taxi Drivers</title>
+      <link>http://localhost:1313/projects-pages/regression_modeling_1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects-pages/regression_modeling_1/</guid>
+      <description>&lt;h2 id=&#34;explanatory-data-analysis-eda&#34;&gt;&#xA;  Explanatory Data Analysis (EDA)&#xA;  &lt;a class=&#34;heading-link&#34; href=&#34;#explanatory-data-analysis-eda&#34;&gt;&#xA;    &lt;i class=&#34;fa-solid fa-link&#34; aria-hidden=&#34;true&#34; title=&#34;Link to heading&#34;&gt;&lt;/i&gt;&#xA;    &lt;span class=&#34;sr-only&#34;&gt;Link to heading&lt;/span&gt;&#xA;  &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;A research has been conducted regarding the money taxi drivers receive in tip across different journeys. These journeys vary in the distance traveled, time duration, number of passengers, the time of day took place, taxi companies, and payment methods. Our goal is to investigate how these differences contribute to the amount of tips taxi drivers receive. The dataset contains 500 observations of 7 variables in total with no data missing.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

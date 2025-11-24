@@ -1,0 +1,385 @@
+---
+title: "Analysis of Property Prices and Sales Time"
+format: html
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = NA, comment = '       ', fig.align = 'center', fig.pos = 'H')
+pacman::p_load('mgcv', 'ggplot2', 'gridExtra', 'dplyr', 'knitr', 'ggpubr')
+prices <- read.csv("prices.csv")
+times <- read.csv("times.csv")
+options(ggplot2.suppress = TRUE)
+options(scipen = 999)
+```
+
+## Part 1: Normal linear model - Analysis of property prices
+
+### Introduction to the data
+A property development company in Statsville needs to analyze how property sales prices depend on various factors. They have provided the data on `r nrow(prices)` properties sold in the last two years, containing `r ncol(prices)` covariates with no data missing. The variables in the dataset provided are as follows:
+
+```{r}
+library(knitr)
+
+data.frame(
+  Variable = c("price", "bedroom_count", "other_count", "total_count", "age", "district", "type", "garden", "area", "station", "agent"),
+  Description = c("sales price of the property (measured in Statsland Dollars)", 
+                  "number of bedrooms in the property",
+                  "number of other rooms in the property",
+                  "total number of rooms in the property",
+                  "age of the property (in years)",
+                  "district of the city where the property is located (district 1, 2, 3, 4)",
+                  "type of property (either detached, semi_detached, terraced or flat)",
+                  "whether or not the property has access to a garden (Y/N)",
+                  "total internal square footage of the property (measured in metres squared)",
+                  "distance to the nearest train station (measured in km)",
+                  "estate agent who handled the sale (agent A, or B)")
+) %>% kable()
+```
+
+
+The first variable `price` is the property sales price in Statsland Dollars (SD).
+It ranges from `r min(prices$price)` to `r max(prices$price)` SD, with a mean of `r as.numeric(mean(prices$price))` SD.
+The remaining variables are potential covariates that could be used to build a model for `price`.
+In the following section, a closer investigation will be conducted on the relationships between each variable and `price`. Note that for boxplots presented later, the mean property sales price in each sub-category are indicated by the red dots in each plot.
+
+```{r, include = FALSE}
+options(scipen = 000)
+```
+```{r, fig.width=12, fig.height=4, fig.cap='Relationships between property price and the number of bedrooms (left), other rooms (middle), and total rooms (right).'}
+plot1 <- ggplot(prices, aes(x = as.factor(bedroom_count), y = price)) + theme_bw() +
+  geom_jitter(alpha = 0.2, color = "darkgreen", width = 0.25) +
+  geom_boxplot(fill = "transparent") + stat_summary(fun = mean, size = 0.6, col = "red", pch = 16) +
+  labs(x = "Bedroom Count", y = "Property Price (SD)")
+plot2 <- ggplot(prices, aes(x = as.factor(other_count), y = price )) + theme_bw() +
+  geom_jitter(alpha = 0.2, color = "#4485C7", width = 0.25) + 
+  geom_boxplot(fill = "transparent") + stat_summary(fun = mean, size = 0.6, col = "red", pch = 16) +
+  labs(x = "Other Rooms Count", y = "Property Price (SD)") 
+plot3 <- ggplot(prices, aes(x = as.factor(total_count), y = price)) + theme_bw() +
+  geom_jitter(alpha = 0.2, color = "#4A5F7E", width = 0.15) + 
+  geom_boxplot(fill = "transparent") + stat_summary(fun = mean, size = 0.6, col = "red", pch = 16) +
+  labs(x = "Total Rooms Count", y = "Property Price (SD)")
+grid.arrange(plot1, plot2, plot3, nrow = 1)
+```
+
+The variables `bedroom_count`, `other_count`, and `total_count` represent the number of bedrooms, the number of rooms other than bedrooms, and the total number of rooms in the property. From Figure 1, we can observe that the property sales prices generally tend to increase with all three variables. In Figure 1 (right), there is a slight violation of the overall trend when total room number equals to 11. However, we only have 1 sample of sales price under this circumstance, and thus should not raise any concerns.
+
+It is worth noting that the trends in these plots appear to be highly similar; the total number of rooms is the sum of the number of bedrooms and other rooms. This could potentially raise collinearity issues in the model building process in the future.
+
+```{r, fig.width = 8, fig.height = 4, out.width='66.7%', fig.cap='Relationships between the property price and its district (left) and type (right).'}
+plot5 <- ggplot(prices, aes(x = as.factor(district), y = price)) +
+  geom_jitter(alpha = 0.5, color = "#94C6CD", width = 0.3) + theme_bw() +
+  geom_boxplot(fill = "transparent") + stat_summary(fun = mean, size = 0.6, col = "red", pch = 16) +
+  labs(x = "District", y = "Property Price (SD)")
+plot6 <- ggplot(prices, aes(x = type, y = price)) +
+  geom_jitter(alpha = 0.4, color = "#72B063", width = 0.3) + theme_bw() +
+  geom_boxplot(fill = "transparent") + stat_summary(fun = mean, size = 0.6, col = "red", pch = 16) +
+  labs(x = "Property Type", y = "Property Price (SD)")
+grid.arrange(plot5, plot6, nrow = 1)
+```
+```{r include = F}
+options(scipen = 999)
+```
+
+Figure 2 (left) shows the sales price of property located in different districts. It is notable that the mean sales price of property in district 2 is higher than that in other districts, with  `r round(max(tapply(prices$price, prices$district, mean)), 2)` SD. 
+Property sales prices in other districts share a similar mean at around 216,000 SD.
+Furthermore, most properties sold were located in district 2 
+(`r length(which(prices$district == 2))` out of `r nrow(prices)`).
+Detached houses appear to be sold for a higher price than others, 
+with a mean difference of 
+`r round(tapply(prices$price, prices$type, mean)[1] - mean(tapply(prices$price, prices$type, mean)[2:4]), 2)` SD.
+
+As shown in Figure 3, property sales prices are analyzed based on the availability of `garden` and the estate `agent` who handled the sale. In both graphs, there are no significant differences in the mean and the range of prices between the two sub-categories. Therefore, accessibility to a garden and choice of the estate agent do not appear to influence property prices significantly.
+
+```{r include = F}
+options(scipen = 000)
+```
+```{r, fig.width = 8, fig.height = 4, out.width='66.7%', fig.cap='Relationships between the property price and availability of garden (left) and agents (right).'}
+plot7 <- ggplot(prices, aes(x = garden, y = price)) +
+  geom_jitter(alpha = 0.35, color = "#84BA42", width = 0.3) + theme_bw() +
+  geom_boxplot(fill = "transparent") + stat_summary(fun = mean, size = 0.6, col = "red", pch = 16) +
+  labs(x = "Garden", y = "Property Price (SD)")
+plot8 <- ggplot(prices, aes(x = agent, y = price)) +
+  geom_jitter(alpha = 0.35, color = "#7ABBDB", width = 0.3) + theme_bw() +
+  geom_boxplot(fill = "transparent") + stat_summary(fun = mean, size = 0.6, col = "red", pch = 16) +
+  labs(x = "Agent", y = "Property Price (SD)")
+grid.arrange(plot7, plot8, nrow = 1)
+```
+
+\newpage
+The three scatterplots in Figure 4 illustrate the sales prices of properties that have different `ages` (in years), `areas` (in $m^2$), and distance to the nearest `station` (in km). Figure 4 (left) indicates a slightly negative correlation between sales price and age of the property. This is sensible as older property tends to be cheaper. No obvious trend has been demonstrated in Figure 4 (middle), suggesting that the area of the property does not significantly impact the sales price itself. Yet further investigations may be needed. Figure 4 (right) indicates a positive correlation between sales price and distance to the nearest station, which seems counter-intuitive. Further investigations are required to determine the relationship between property sales price and these variables.
+
+```{r, fig.width=12, fig.height=4, fig.cap='Relationships between the property price and age (left), area (middle), and distance to nearest station (right).'}
+plot9 <- ggplot(prices, aes(x = age, y = price)) +
+  geom_point(alpha = 0.6, color = "#72B063") + theme_bw() + 
+  labs(x = "Age (years)", y = "Property Price (SD)") 
+plot10 <- ggplot(prices, aes(x = area, y = price)) +
+  geom_point(alpha = 0.6, color = "#CC7C71") + theme_bw() + 
+  labs(x = expression("Area (" * m^2 *")"), y = "Property Price (SD)") 
+plot11 <- ggplot(prices, aes(x = station, y = price)) +
+  geom_point(alpha = 0.6, color = "#719AAA") + theme_bw() + 
+  labs(x = "Distance to Nearest Station (km)", y = "Property Price (SD)")
+
+grid.arrange(plot9, plot10, plot11, nrow = 1)
+```
+
+Additionally, there exists an influential observation in the dataset, i.e., the data point with the maximum property price: `r max(prices$price)` SD.
+This point stands out from the main bulk of the data, suggesting its potential influence on the least squares line. 
+
+In conclusion, the initial findings suggest that sales `price` of a property could be potentially influenced by: `bedroom_count`, `other_count`, `total_count`, `district`, `type`, `age`, `station`, and `area`. Interactions among the covariates are also worth exploring, as unmentioned covariates might significantly influence outcomes as well. Therefore, all variables analyzed above should be accounted for when constructing a statistical model for property sales prices.
+
+### Model building
+To establish a basic understanding of relationship between the response variable and the covariates, we first build a full model using all the covariates provided in the data set. However, instead of letting R automatically treat the `district` variable as a numeric variable, we manually convert it into a categorical data. Hence, we obtain our first model as shown below.
+```{r}
+model1 <- lm(price ~ . - district + as.factor(district), data = prices)
+output1 <- capture.output(summary(model1))
+output1 <- output1[-1]
+cat(output1, sep ='\n')
+```
+
+However, as we can see from the model summary, covariates such as `total_count`, `type`, and `agent` are all insignificant. It is noticeable that collinearity exists between `bedroom_count`, `other_count`, and `total_count` as the value of the third variable can be obtained by adding up the corresponding values of the first two variables. Therefore, we need to exclude one of the variables to make the model valid. Considering the importance of `bedroom_count` and `total_count` contributing to the house price, we choose to exclude the variable `other_count`. We also exclude the variables `type` and `agent` as they do not show any significance in the normal regression model. The updated model is as shown below.
+
+```{r}
+model2 <- lm(price ~ . - district + as.factor(district) - other_count - agent - type, data = prices)
+output2 <- capture.output(summary(model2))
+output2 <- output2[-1]
+cat(output2, sep = '\n')
+```
+
+\newpage
+Since this is a nested model of the first model we built, we can compare the two models using an F-test. From the below ANOVA table, we can conclude that our updated model outperforms the original model since the p-value is significantly larger than 0.05.
+
+```{r}
+anova1 <- anova(model2, model1)
+anova1$`Pr(>F)` <- format(anova1$`Pr(>F)`, scientific = TRUE, digits = 3)
+anova1[] <- lapply(anova1, function(x) {
+  if (is.numeric(x)) {
+    # Apply scientific notation only to values > 10,000
+    ifelse(x > 10000, format(x, scientific = TRUE, digits = 3), x)
+  } else {
+    x  # Keep non-numeric columns unchanged
+  }
+})
+kable(anova1, caption = "ANOVA Table of Model 1 and Model 2.", 
+      align = rep('c', ncol(anova1))) 
+```
+
+Notice that all the covariates in our second model are significant but one -- that is, the 4th district. Since other `district` variables are considered significant in our model, we believe it is possible to find a way to make this variable useful. It is intuitive that the housing price is related to both its area and its location. Therefore, we add an interaction between the area and the district and hence obtain our final model as presented below.
+
+```{r}
+model3 <- lm(price ~ . - district + as.factor(district) * area - other_count - agent - type, data = prices)
+output3 <- capture.output(summary(model3))
+output3 <- output3[-1]
+cat(output3, sep = '\n')
+```
+
+As can be seen from the model summary above, we have used most of the covariates in the data set, and all the covariates used in the final model are significant. As the ANOVA table shows below, by conducting another F-test, we observe a tiny p-value indicating that there is strong evidence that our final chosen model is preferred.
+
+```{r}
+anova2 <- anova(model2, model3)
+anova2$`Pr(>F)` <- format(anova2$`Pr(>F)`, scientific = TRUE, digits = 3)
+anova2[] <- lapply(anova2, function(x) {
+  if (is.numeric(x)) {
+    ifelse(x > 10000, format(x, scientific = TRUE, digits = 3), x)
+  } else {
+    x 
+  }
+})
+
+kable(anova2, caption = "ANOVA Table of Model 2 and Model 3.", 
+      align = rep('c', ncol(anova2))) 
+```
+
+### Model checking 
+- **Model Fit.** According to the model summary mentioned above, the adjusted R-squared of our final chosen model is $0.9183$, indicating that roughly $91.83\%$ of the variations in the property prices can be explained our model and suggesting a potentially good fit. We check the model fit of our final chosen model by plotting the its residuals. As can be seen from Figure 5, the range of the residuals of our final model has reduced to almost half of that of the original full model, indicating that the accuracy has improved to certain extent. Despite that, the residuals of our final model generally fluctuate between $-25000$ and $50000$ SD with a $0$ mean, and most residuals are constraint within the range $\pm 25000$ SD, which is roughly $21.5\%$ of the mean property price in Statsville.
+
+```{r, fig.width = 8, fig.height = 4, out.width='66.7%', fig.cap='Comparison of residuals of model 1 and model 3.'}
+plot1 <- ggplot(NULL, aes(1:length(residuals(model1)), residuals(model1))) + geom_line(color = "blue") + ylim(-26000, 126000) + geom_hline(yintercept = mean(residuals(model1)), color = "red", linetype = 'dashed') + theme_bw() + labs(x = 'Index', y = 'Residuals')
+plot2 <- ggplot(NULL, aes(1:length(residuals(model3)), residuals(model3))) + geom_line(color = "blue") + ylim(-26000, 126000) + geom_hline(yintercept = mean(residuals(model3)), color = "red", linetype = 'dashed') + theme_bw() + labs(x = 'Index', y = 'Residuals')
+grid.arrange(plot1, plot2, ncol = 2)
+```
+
+- **Linearity and Homoscedasticity.**
+We plot the residuals and the standardized residuals over the fitted values to check the linearity and homoscedasticity assumptions in our model. As can be seen from the plot on the left, despite the slight curvature demonstrated on the red LOESS regression line, indicating that we might need to take further investigations on certain terms, no severe violations of linearity has been shown. Furthermore, while there's a slight increase in the spread of residuals for lower fitted values, the residuals generally appear relatively evenly distributed around 0, maintaining a constant spread and demonstrating evidence of homoscedasticity. As a result, we have justified our use of a normal linear model since both linearity and homoscedasticity assumptions are met, as required.
+
+```{r fig.width = 12, fig.height = 6, out.width='66.7%', fig.cap='Residuals and standardized residuals versus fitted values.'}
+model3_fitted <- fitted(model3)
+model3_stdres <- rstandard(model3)
+par(mfrow = c(1,2))
+plot(model3, which= 1, pch = 16, col = 'blue')
+grid()
+plot(model3_fitted, model3_stdres, pch = 16, col = 'blue', 
+     xlab = 'Fitted values', ylab = 'Standardized Residuals')
+abline(h = 0, col = 'red', lty = 2)
+grid()
+par(mfrow = c(1,1))
+```
+
+- **Normality of the Errors.** As can be seen from Figure 7 below, there's a clear departure from the acceptable range (highlighted in light gray) of the QQ-line, demonstrating that the normality assumption of the errors is not met. However, it does not affect our use of a normal linear model, we will further elaborate on this and the method to alleviate it in the limitation analysis later. 
+```{r fig.width = 6, fig.height = 4, out.width = '66.7%'}
+ggqqplot(model3_stdres) + theme_bw()
+```
+
+### Conclusion
+In conclusion, according to our model, the sales prices of the properties on Statsville are related to various factors including the number of bedrooms, the number of rooms in total, property age, garden availability, total area, distance to nearest train station, and district location. In general, properties with a garden, more rooms, larger areas, and greater distance from the train station tend to be more expensive. On the other hand, demonstrated by the negative coefficient, the older the property, the cheaper it is. Furthermore, housing prices in District 2 are significantly higher compared to those in District 1, followed by District 4 and District 3. It is also worth noticing that the district location can also be investigated together with the area of the property. 
+However, the additional change in the property price per unit change in the property area for properties in District 2, 3, and 4 is smaller that that of properties for District 1. Using these tendencies described in our model, we can approximate the sales price of the properties rather accurately.
+
+\newpage
+### Limitations and Potential Alleviation Strategies
+To begin with, in order to get rid of collinearity and insignificant covariates, we choose not to include covariates such as `agent` and `type`; therefore, our model may not be as thorough and comprehensive. Secondly, even though our model roughly met the linearity and homoscedasticity assumptions, slight departures from both assumptions still exist, implying that further investigations on certain terms may be required. More importantly, as mentioned above, the normality of error components in the model has not yet been satisfied. While this does not affect the estimation of coefficients in a normal linear model, it can impact the validity of statistical tests and confidence intervals for various model components. Apart from that, more covariates could be included to create a better model for the `price`. For example, the number of schools within the neighborhood where the property is located. With a higher number of schools, the property could be more desirable due to the likelihood of accessing quality education. This covariate may also create new interaction terms with others. Nevertheless, considering the principle of parsimony and interpretability of the model, more statistical tests could be carried out to examine whether the new variables significantly explain the variation in the response variable.
+
+## Part 2: Generalised additive model - Analysis of sales times
+### Simple Exploratory Analysis and Model Selection
+
+Now, we are required to develop either a generalized linear regression model (GLM)
+or a generalized additive regression model (GAM) 
+for the variable `quick_sale`,
+where `quick_sale` indicates
+whether the property was sold within two months (with value 1) or in more than two months (with value 0).
+Based on the model, the aim is to choose an agent who will maximize the chance of a quick sale. The two covariates are:
+
+$$\begin{cases}
+\text{Price: the sales price of the property in SD} \\
+\text{Agent: the estate agent (A or B) who handled the sale}
+\end{cases}$$
+
+To start with, a simple exploratory analysis can be carried for choosing an appropriate model.
+The plot below depicts the relationship between 
+the probability of a quick sale and the property prices for agent A and B.
+Property prices are split into different bins and 
+the proportion of quick sales in each interval is displayed by red dots
+(intervals with no red dots means no data is associated with this range).
+
+```{r preparation for task 2 - split into A and B subset, include = FALSE}
+times$agent <- as.factor(times$agent)
+timesA <- subset(times, agent == "A")
+timesB <- subset(times, agent == "B")
+```
+
+
+```{r, fig.width=12, fig.height=6, out.width = '66.7%'}
+par(mfrow = c (1, 2))
+
+price.binsA <- findInterval(timesA$price, seq(125000, 350000, by = 25000))
+prop.withinA <- tapply(timesA$quick_sale, price.binsA, mean)
+
+plot(timesA$price, timesA$quick_sale,
+     pch = 16, cex = 0.7, xlim = c(100000, 450000), ylim = c(-0.1, 1),
+     xlab = "Sales price of the property (SD)",
+     ylab = "Probability of quick sale",
+     main = "Agent A", cex.main = 1)
+abline(v = seq(100000, 450000, by = 25000), lty = 2, lwd = 0.7, col = "grey80")
+points(c(seq(150000, 350000, by = 25000) - 12500), prop.withinA,
+       col = "red", pch= 16, cex = 1.5)
+
+price.binsB <- findInterval(timesB$price, seq(125000, 450000, by = 25000))
+prop.withinB <- tapply(timesB$quick_sale, price.binsB, mean)
+
+plot(timesB$price, timesB$quick_sale,
+     pch = 16, cex = 0.7, xlim = c(100000, 450000), ylim = c(-0.1, 1),
+     xlab = "Sales price of the property (SD)",
+     ylab = "Probability of quick sale",
+     main = "Agent B", cex.main = 1)
+abline(v = seq(100000, 450000, by = 25000), lty = 2, lwd = 0.7, col = "grey80")
+points(c(seq(150000, 350000, by = 25000) - 12500, 412500), 
+       prop.withinB,
+       col = "red", pch= 16, cex = 1.5)
+```
+
+
+Since we have a binary response variable, 
+relating to the successes and failures of a quick sale,
+a Bernoulli distribution or a Binomial distribution with $n=1$ is appropriate.
+Besides, both distributions belong to the exponential family, 
+so it is sensible to construct a model using a GLM or GAM.
+
+Within both agents, parametric functions that might model the relationship between 
+the sales price of the property and the probability of a quick sale
+can hardly be identified.
+Therefore, it seems reasonable to take a non-parametric approach 
+and thus use a generalized additive regression model.
+Furthermore, observing that 
+the general pattern of the relationship between prices and the probability of quick sales 
+differ between agents, an interaction term can be included in the model.
+
+Combining the above considerations, the model for the variable `quick_sale` is
+a generalized additive regression model taking `price`, `agent`, and their interaction 
+with a binomial family and a logit link function.
+A logit link can restrict the mean to between 0 and 1,
+since we are estimating the probability associated with each observation.
+A summary of the model output is shown as below:
+
+```{r gam.AB output, echo = FALSE}
+gam.AB <- gam(quick_sale ~ s(price, by = agent) + agent,
+              family = binomial(link = "logit"),
+              data = times)
+output_gam <- capture.output(summary(gam.AB))
+output_gam <- output_gam[-1]
+cat(output_gam, sep = '\n')
+```
+
+### Assessing the Model Fit
+To assess the model fit, we plot the fitted values of the model versus the covariate `price` as shown below in Figure 7. There seems to be a reasonable alignment between the fitted probabilities and the previous empirical results while spotting some deviations at certain price ranges. Hence, the model fit is considered to be good.
+
+```{r, fig.width = 9, fig.height = 6, out.width = '66.7%', fig.cap="Plot of fitted values of the model against the sales prices with colored dots indicating the probability of a quick sale in each interval", fig.align='center'}
+plot(times$price, fitted(gam.AB),
+     pch = 20, xlim = c(100000, 450000), ylim = c(-0.1, 1),
+     xlab = "Sales Price (SD)",
+     ylab = "Probability of Quick Sale")
+
+  
+
+abline(v = seq(100000, 450000, by = 25000), lty = 2, lwd = 0.7, col = "grey80")
+
+points(c(seq(150000, 350000, by = 25000) - 12500), prop.withinA,
+       col = "blue", pch= 16, cex = 1.5)
+points(c(seq(150000, 350000, by = 25000) - 12500, 412500), 
+       prop.withinB,
+       col = "red", pch= 16, cex = 1.5)
+
+legend("bottomright",
+       col = c("blue", "red"),
+       legend = c("Agent A", "Agent B"),
+       pch = 16)
+```
+
+### Main features of the model
+The plots of smooth terms tell the story of what the model is doing.
+The plot on the left shows how the price affects the estimated probability of a quick sale for Agent A.
+It shows that when the sales price is less than 200,000 SD or between 270,000 SD and 300,000 SD, higher-priced properties are more likely to sell quickly.
+The plot on the right illustrates that in agent B, when prices are below 225,000 SD,
+the probability is disproportional to the sales prices, 
+while the positive relationship starts from property values greater than 250,000 SD.
+
+```{r, echo = FALSE, fig.width=12, fig.height=6, out.width = '70%', fig.cap="Plots of smooth terms against prices", fig.align='center'}
+par(mfrow = c(1, 2))
+plot(gam.AB, ylim = c(-50, 50), ylab = '')
+```
+
+### Choice between agents
+To choose which estate agent to employ to maximize the chance of a quick sale 
+given that the property will be sold for 200,000 SD, 
+a prediction from the model is displayed below:
+
+```{r include = F}
+predict(gam.AB, 
+        data.frame(price=c(200000), agent = unique(times$agent)), 
+        se.fit=TRUE, type = "response")
+```
+
+```{r}
+data.frame(
+  ` ` = c("fit", "se.fit"),
+  `Agent A` = c(0.09535046, 0.09388414),
+  `Agent B` = c(0.56672825, 0.07968983),
+  check.names = FALSE
+) %>% 
+  kable(caption = "Predicted probability for a quicksale given the 200,000 SD property price.")
+```
+
+
+
+According to the result shown in Table 3,  agent B is associated with a higher probability 
+and a smaller standard error meaning less uncertainty. Therefore, the manager should employ Agent B to sell his property.
+
+\
+
+**Total word count:** 2375
